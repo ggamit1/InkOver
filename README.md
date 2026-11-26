@@ -15,6 +15,8 @@ InkOver is an open-source macOS menu bar app that lets you draw directly on your
 
 ## Annotate
 
+Download [the HTML walkthrough](tutorial.html) and open it in a browser for a step-by-step guide and a practice canvas.
+
 1. Move the pointer to the display you want to mark up. Press **Control–Option–Command–I** or choose **Start Annotation** from the InkOver menu bar icon.
 2. Choose **Pen**, **Highlighter**, **Line**, **Arrow**, **Rectangle**, or **Oval**, then drag on the display. Set the ink color and width from the toolbar. Choose **Toolbar Position** in the InkOver menu for **Right**, **Left**, **Top**, or **Bottom**. Right is the default. Both sides use two columns, while Top and Bottom use one horizontal row. Drag the handle to reposition the toolbar, and scroll the tool strip on smaller displays. The toolbar follows macOS Reduce Motion settings.
 3. For a text label, select **Text**, choose a size, and click where the label should appear. Type and press **Return** to place it or **Escape** to cancel typing.

@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn to draw on your Mac screen with InkOver. Follow the quick start, try the drawing tools, and set up a whiteboard or cursor ring.">
+  <title>InkOver Tutorial · Draw on your Mac screen</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #15181f;
+      --surface: #1d222c;
+      --surface-raised: #272d39;
+      --border: #383f4d;
+      --text: #f7f5f2;
+      --muted: #bec4d1;
+      --ink: #ffb1a0;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: ui-monospace, "SF Mono", Consolas, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--background); color: var(--text); font: 1rem/1.6 var(--sans); }
+    a { color: var(--ink); text-underline-offset: .24em; }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 2px solid #ffd386; outline-offset: 4px; }
+    button { font: inherit; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2, h3 { line-height: 1.12; }
+    h2 { font-size: clamp(1.75rem, 3.7vw, 2.5rem); letter-spacing: -.045em; }
+    h3 { font-size: 1.15rem; letter-spacing: -.02em; }
+    kbd { font: 600 .88em var(--mono); }
+    section[id] { scroll-margin-top: 1.25rem; }
+
+    .wrap { width: min(100% - 3rem, 74rem); margin-inline: auto; }
+    .site-header { border-bottom: 1px solid var(--border); }
+    .header-inner {
+      min-height: 4.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem 1.5rem;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      color: var(--text);
+      font-weight: 750;
+      letter-spacing: -.025em;
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      width: 1.65rem;
+      height: 1.65rem;
+      place-items: center;
+      border: 1px solid #ef937f;
+      border-radius: 50%;
+    }
+    .brand-mark::before {
+      content: "";
+      width: .61rem;
+      height: .17rem;
+      border-radius: .2rem;
+      background: var(--ink);
+      transform: rotate(-44deg);
+    }
+    .site-nav { display: flex; flex-wrap: wrap; gap: .5rem 1.35rem; }
+    .site-nav a, .footer a { color: var(--muted); font-size: .88rem; text-decoration: none; }
+    .site-nav a:hover, .footer a:hover { color: var(--text); text-decoration: underline; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(16rem, .9fr) minmax(0, 1.35fr);
+      align-items: center;
+      gap: clamp(2rem, 5vw, 4.75rem);
+      padding-block: clamp(2.75rem, 7vw, 5.75rem);
+    }
+    .hero-copy h1 {
+      max-width: 11ch;
+      font-size: clamp(2.85rem, 5.8vw, 5.2rem);
+      font-weight: 750;
+      letter-spacing: -.07em;
+      line-height: .98;
+    }
+    .hero-copy p { max-width: 37ch; margin-top: 1.35rem; color: var(--muted); font-size: 1.07rem; }
+    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .85rem 1.15rem; margin-top: 1.6rem; }
+    .primary-link {
+      padding: .65rem 1rem;
+      border-radius: .55rem;
+      background: var(--ink);
+      color: #211b21;
+      font-weight: 720;
+      text-decoration: none;
+    }
+    .primary-link:hover { background: #ffc0b2; }
+    .download { font-size: .91rem; font-weight: 650; }
+
+    .practice {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--surface);
+      box-shadow: 0 16px 48px #06090f53;
+    }
+    .practice-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      column-gap: 1rem;
+      padding: .9rem 1rem;
+    }
+    .practice-header h2 { font-size: 1rem; letter-spacing: -.02em; }
+    .practice-header p { color: var(--muted); font-size: .8rem; }
+    .screen {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      min-height: 10.75rem;
+      aspect-ratio: 640 / 290;
+      background:
+        radial-gradient(ellipse at 17% 10%, #614454 0, transparent 65%),
+        linear-gradient(145deg, #3e394a, #232b40 75%);
+    }
+    .editor {
+      position: absolute;
+      top: 20%;
+      left: 11%;
+      width: 78%;
+      overflow: hidden;
+      border: 1px solid #626374;
+      border-radius: .6rem;
+      background: #161d29;
+      box-shadow: 0 10px 30px #0608115c;
+    }
+    .editor-header {
+      padding: .43rem .7rem;
+      background: #232a37;
+      color: #d2d6e0;
+      font: .72rem/1.5 var(--mono);
+    }
+    .editor pre {
+      margin: 0;
+      padding: .85rem .7rem 1.2rem;
+      color: #f2ebdf;
+      font: clamp(.62rem, 1.6vw, .91rem)/1.9 var(--mono);
+    }
+    .keyword { color: #dfb6ff; }
+    .function { color: #a7d4ff; }
+    .number { color: #ffbd91; }
+    .screen canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .practice-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .4rem;
+      padding: .65rem .85rem .45rem;
+    }
+    .practice-tools[hidden] { display: none; }
+    .practice-tools button {
+      min-height: 2.25rem;
+      padding: .25rem .66rem;
+      border: 1px solid transparent;
+      border-radius: .4rem;
+      background: transparent;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 660;
+      cursor: pointer;
+    }
+    .practice-tools button[aria-pressed="true"] { background: #45333a; border-color: #926469; color: #ffe2d9; }
+    .practice-tools button:not(:disabled):hover { background: var(--surface-raised); color: var(--text); }
+    .practice-tools button:disabled { opacity: .45; cursor: default; }
+    .actions { display: flex; gap: .1rem; margin-left: auto; }
+    .practice-hint { min-height: 2.3rem; padding: 0 1rem .75rem; color: var(--muted); font-size: .78rem; }
+
+    .content-section { padding-block: clamp(2rem, 5vw, 3.5rem); border-top: 1px solid var(--border); }
+    .section-intro { margin: .65rem 0 1.4rem; color: var(--muted); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .85rem;
+      margin: 1.35rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .steps li { padding: 1.25rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); }
+    .step-number { display: block; margin-bottom: .55rem; color: var(--ink); font: 650 .85rem var(--mono); }
+    .steps p { margin-top: .55rem; color: var(--muted); font-size: .91rem; }
+    .tools { margin: 0; border-top: 1px solid var(--border); }
+    .tool-row { display: grid; grid-template-columns: minmax(11rem, .38fr) 1fr; gap: .7rem 1.25rem; padding: .88rem 0; border-bottom: 1px solid var(--border); }
+    .tool-row dt { font-weight: 690; }
+    .tool-row dd { margin: 0; color: var(--muted); }
+    .options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 1.35rem; }
+    .options p { margin-top: .5rem; color: var(--muted); font-size: .93rem; }
+    .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; padding-block: 1.25rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .88rem; }
+
+    @media (max-width: 52rem) {
+      .hero { grid-template-columns: 1fr; align-items: start; }
+      .hero-copy h1 { max-width: 18ch; }
+      .steps, .options { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 36rem) {
+      .wrap { width: calc(100% - 2rem); }
+      .header-inner { padding-block: .7rem; }
+      .site-nav { gap: .5rem .9rem; }
+      .tool-row { grid-template-columns: 1fr; gap: .25rem; }
+      .editor { left: 7%; width: 86%; }
+      .actions { margin-left: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>InkOver Tutorial</a>
+      <nav class="site-nav" aria-label="Tutorial">
+        <a href="#quick-start">Quick start</a>
+        <a href="#tools">Drawing tools</a>
+        <a href="#settings">Settings</a>
+        <a href="https://github.com/ggamit1/InkOver">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <div class="hero-copy">
+        <h1>Draw on your Mac screen.</h1>
+        <p>Use InkOver to highlight code, point out details, or sketch while you present.</p>
+        <div class="hero-actions">
+          <a class="primary-link" href="#quick-start">Start the walkthrough</a>
+          <a class="download" href="https://github.com/ggamit1/InkOver/blob/main/Distribution/InkOver-0.1.0.dmg">Get the macOS DMG</a>
+        </div>
+      </div>
+
+      <section class="practice" id="practice" aria-labelledby="practice-title">
+        <div class="practice-header">
+          <h2 id="practice-title">Practice canvas</h2>
+          <p>Try drawing in your browser.</p>
+        </div>
+        <div class="screen">
+          <div class="editor">
+            <div class="editor-header">demo.swift</div>
+            <pre><code><span class="keyword">func</span> <span class="function">double</span>(_ value: Int) -&gt; Int {
+    <span id="return-line"><span class="keyword">return</span> value * <span class="number">2</span></span>
+}</code></pre>
+          </div>
+          <canvas id="ink" width="640" height="290" aria-label="Draw over a sample Swift function" aria-describedby="practice-hint">
+            The quick-start walkthrough below describes the same drawing gestures.
+          </canvas>
+        </div>
+        <div class="practice-tools" hidden>
+          <button type="button" data-tool="pen" aria-pressed="true">Pen</button>
+          <button type="button" data-tool="highlighter" aria-pressed="false">Highlighter</button>
+          <button type="button" data-tool="arrow" aria-pressed="false">Arrow</button>
+          <div class="actions">
+            <button id="example" type="button">Show example</button>
+            <button id="undo" type="button" disabled>Undo</button>
+            <button id="clear" type="button">Clear</button>
+          </div>
+        </div>
+        <p class="practice-hint" id="practice-hint" aria-live="polite" hidden>Drag across the code to draw a freehand mark.</p>
+        <noscript><p class="practice-hint">Enable JavaScript to draw in this canvas.</p></noscript>
+      </section>
+    </div>
+
+    <section class="content-section" id="quick-start">
+      <h2>Quick start</h2>
+      <ol class="steps" role="list">
+        <li>
+          <span class="step-number" aria-hidden="true">01</span>
+          <h3>Install and open</h3>
+          <p>Download the DMG from GitHub using <strong>Download raw file</strong>. Open it, drag <strong>InkOver</strong> to <strong>Applications</strong>, and launch the app. Look for the pencil icon in the menu bar.</p>
+          <p>The beta requires <strong>macOS 14 Sonoma or later</strong> and supports Apple silicon and Intel Macs. It is ad hoc signed.</p>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">02</span>
+          <h3>Start annotating</h3>
+          <p>Move your pointer to the display you want to mark up. Press <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>Command</kbd> + <kbd>I</kbd>, or choose <strong>Start Annotation</strong> from the InkOver menu.</p>
+          <p>Choose <strong>Pen</strong> in the floating toolbar, pick a color and width, then drag on the screen.</p>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">03</span>
+          <h3>Switch back and finish</h3>
+          <p>Choose <strong>Pointer</strong> to click and scroll in the app underneath while your marks stay visible. Select a drawing tool to resume.</p>
+          <p>Click <strong>Done</strong> or press the same shortcut to end annotation. InkOver restores your marks when you start again in the current session.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="content-section" id="tools">
+      <h2>Drawing tools</h2>
+      <p class="section-intro">Choose a tool in the toolbar, then make a mark on your screen or board.</p>
+      <dl class="tools">
+        <div class="tool-row">
+          <dt>Pen and Highlighter</dt>
+          <dd>Drag to draw freehand. Use Highlighter when you want to keep the content beneath the ink visible.</dd>
+        </div>
+        <div class="tool-row">
+          <dt>Line and Arrow</dt>
+          <dd>Drag from the starting point to the end. For Arrow, release at the detail you want to point to.</dd>
+        </div>
+        <div class="tool-row">
+          <dt>Rectangle and Oval</dt>
+          <dd>Drag between opposite corners of the area you want to frame.</dd>
+        </div>
+        <div class="tool-row">
+          <dt>Text</dt>
+          <dd>Pick a size, click to place a label, and type. Press <kbd>Return</kbd> to save it or <kbd>Escape</kbd> to cancel.</dd>
+        </div>
+        <div class="tool-row">
+          <dt>Eraser and Clear</dt>
+          <dd>Drag Eraser over marks or choose Clear to remove them all from the current canvas. Use <kbd>⌘Z</kbd> to undo or <kbd>⇧⌘Z</kbd> to redo.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="content-section" id="settings">
+      <h2>Board, cursor ring, and toolbar</h2>
+      <div class="options">
+        <div>
+          <h3>Draw on a separate board</h3>
+          <p>Choose <strong>Board</strong> and open <strong>Options</strong> for a horizontal or vertical page with a dark or white background. Click <strong>Board</strong> again to return to the screen.</p>
+        </div>
+        <div>
+          <h3>Highlight the pointer</h3>
+          <p>Toggle <strong>Ring</strong> in the toolbar or <strong>Cursor Ring</strong> in the menu bar. Set its color and diameter in <strong>Settings</strong>. It can stay on between annotation sessions.</p>
+        </div>
+        <div>
+          <h3>Move or hide the toolbar</h3>
+          <p>Drag the toolbar handle or choose an edge from <strong>Toolbar Position</strong> in the menu bar. Choose <strong>Hide</strong> for a clear view and <strong>Show Toolbar</strong> to bring it back.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span>InkOver for macOS</span>
+    <a href="https://github.com/ggamit1/InkOver">View the GitHub repository</a>
+  </footer>
+
+  <script>
+    const canvas = document.querySelector("#ink");
+    const context = canvas.getContext("2d");
+    const hint = document.querySelector("#practice-hint");
+    const toolButtons = document.querySelectorAll("[data-tool]");
+    const undoButton = document.querySelector("#undo");
+    const clearButton = document.querySelector("#clear");
+    const styles = {
+      pen: { color: "#ff9e8e", width: 4 },
+      highlighter: { color: "#ffd16b72", width: 19 },
+      arrow: { color: "#ffad9d", width: 4 }
+    };
+    const instructions = {
+      pen: "Drag across the code to draw a freehand mark.",
+      highlighter: "Drag across the return line to highlight it.",
+      arrow: "Drag toward a detail to point to it with an arrow."
+    };
+    const exampleHighlight = { tool: "highlighter", points: [] };
+    const exampleArrow = { tool: "arrow", points: [] };
+    const example = [exampleHighlight, exampleArrow];
+    const returnLine = document.querySelector("#return-line");
+    let tool = "pen";
+    let marks = example;
+    let activeStroke = null;
+    let activePointer = null;
+    const undoHistory = [];
+
+    function renderStroke(stroke) {
+      const { color, width } = styles[stroke.tool];
+      const start = stroke.points[0];
+      const end = stroke.points.at(-1);
+      context.strokeStyle = color;
+      context.lineWidth = width;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.beginPath();
+      context.moveTo(start.x, start.y);
+
+      if (stroke.tool === "arrow") {
+        const angle = Math.atan2(end.y - start.y, end.x - start.x);
+        if (Math.hypot(end.x - start.x, end.y - start.y) < 5) return;
+        context.lineTo(end.x, end.y);
+        for (const wing of [-.55, .55]) {
+          context.moveTo(end.x, end.y);
+          context.lineTo(end.x - 18 * Math.cos(angle + wing), end.y - 18 * Math.sin(angle + wing));
+        }
+      } else {
+        context.lineTo(start.x + .01, start.y);
+        for (const point of stroke.points.slice(1)) context.lineTo(point.x, point.y);
+      }
+      context.stroke();
+    }
+
+    function render() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      for (const mark of marks) renderStroke(mark);
+      if (activeStroke) renderStroke(activeStroke);
+      undoButton.disabled = undoHistory.length === 0;
+      clearButton.disabled = marks.length === 0;
+    }
+
+    function setMarks(nextMarks) {
+      undoHistory.push(marks);
+      marks = nextMarks;
+      render();
+    }
+
+    function pointFrom(event) {
+      const bounds = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - bounds.left) * canvas.width / bounds.width,
+        y: (event.clientY - bounds.top) * canvas.height / bounds.height
+      };
+    }
+
+    function positionExample() {
+      const line = returnLine.getBoundingClientRect();
+      const center = line.top + line.height / 2;
+      const start = pointFrom({ clientX: line.left, clientY: center });
+      const end = pointFrom({ clientX: line.right, clientY: center });
+      exampleHighlight.points = [start, end];
+      exampleArrow.points = [{ x: end.x + 145, y: end.y + 56 }, { x: end.x + 14, y: end.y + 6 }];
+      render();
+    }
+
+    if (context) {
+      document.querySelector(".practice-tools").hidden = false;
+      hint.hidden = false;
+      for (const button of toolButtons) {
+        button.addEventListener("click", () => {
+          tool = button.dataset.tool;
+          for (const option of toolButtons) option.setAttribute("aria-pressed", option === button);
+          hint.textContent = instructions[tool];
+        });
+      }
+      document.querySelector("#example").addEventListener("click", () => {
+        if (marks !== example) setMarks(example);
+        hint.textContent = "The example highlights the return line and points to it with an arrow.";
+      });
+      undoButton.addEventListener("click", () => {
+        marks = undoHistory.pop();
+        hint.textContent = "Last change undone.";
+        render();
+      });
+      clearButton.addEventListener("click", () => {
+        setMarks([]);
+        hint.textContent = "Canvas cleared. Draw a new mark or choose Undo.";
+      });
+      canvas.addEventListener("pointerdown", event => {
+        if (activePointer !== null || event.button !== 0) return;
+        activePointer = event.pointerId;
+        activeStroke = { tool, points: [pointFrom(event)] };
+        canvas.setPointerCapture(activePointer);
+        render();
+      });
+      canvas.addEventListener("pointermove", event => {
+        if (event.pointerId !== activePointer) return;
+        const point = pointFrom(event);
+        if (activeStroke.tool === "arrow") activeStroke.points[1] = point;
+        else activeStroke.points.push(point);
+        render();
+      });
+      canvas.addEventListener("pointerup", event => {
+        if (event.pointerId !== activePointer) return;
+        const stroke = activeStroke;
+        const start = stroke.points[0];
+        const end = pointFrom(event);
+        activeStroke = null;
+        activePointer = null;
+        stroke.points.push(end);
+        if (stroke.tool !== "arrow" || Math.hypot(end.x - start.x, end.y - start.y) >= 5) {
+          setMarks([...marks, stroke]);
+          hint.textContent = "Mark added. Choose Undo to remove it.";
+        } else {
+          render();
+        }
+      });
+      canvas.addEventListener("pointercancel", event => {
+        if (event.pointerId !== activePointer) return;
+        activeStroke = null;
+        activePointer = null;
+        render();
+      });
+      positionExample();
+      new ResizeObserver(positionExample).observe(canvas);
+    }
+  </script>
+</body>
+</html>
