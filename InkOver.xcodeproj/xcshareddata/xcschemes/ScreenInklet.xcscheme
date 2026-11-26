@@ -6,7 +6,7 @@
         buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">
         <BuildableReference BuildableIdentifier="primary"
               BlueprintIdentifier="E86A3881BA20535A5777936B"
-              BuildableName="InkOver.app" BlueprintName="InkOver"
+              BuildableName="ScreenInklet.app" BlueprintName="ScreenInklet"
               ReferencedContainer="container:InkOver.xcodeproj">
             </BuildableReference>
       </BuildActionEntry>
@@ -27,7 +27,7 @@
     <BuildableProductRunnable runnableDebuggingMode="0">
       <BuildableReference BuildableIdentifier="primary"
               BlueprintIdentifier="E86A3881BA20535A5777936B"
-              BuildableName="InkOver.app" BlueprintName="InkOver"
+              BuildableName="ScreenInklet.app" BlueprintName="ScreenInklet"
               ReferencedContainer="container:InkOver.xcodeproj">
             </BuildableReference>
     </BuildableProductRunnable>
@@ -37,7 +37,7 @@
     <BuildableProductRunnable runnableDebuggingMode="0">
       <BuildableReference BuildableIdentifier="primary"
               BlueprintIdentifier="E86A3881BA20535A5777936B"
-              BuildableName="InkOver.app" BlueprintName="InkOver"
+              BuildableName="ScreenInklet.app" BlueprintName="ScreenInklet"
               ReferencedContainer="container:InkOver.xcodeproj">
             </BuildableReference>
     </BuildableProductRunnable>

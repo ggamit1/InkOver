@@ -3,18 +3,19 @@ set -euo pipefail
 
 root="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 build="$root/.build"
-app="$build/InkOver.app"
+name="ScreenInklet"
+app="$build/$name.app"
 mkdir -p "$build"
 
 stage="$(mktemp -d "$build/stage.XXXXXX")"
 trap 'rm -rf -- "$stage"' EXIT
-bundle="$stage/InkOver.app"
+bundle="$stage/$name.app"
 mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources" "$build/module-cache"
 
 xcrun swiftc \
     -target "$(uname -m)-apple-macosx14.0" \
     -swift-version 6 -O -module-cache-path "$build/module-cache" \
-    "$root"/InkOver/*.swift -o "$bundle/Contents/MacOS/InkOver"
+    "$root"/InkOver/*.swift -o "$bundle/Contents/MacOS/$name"
 
 cp "$root/InkOver/Info.plist" "$bundle/Contents/Info.plist"
 cp "$root/InkOver/Resources/InkOver.icns" "$bundle/Contents/Resources/InkOver.icns"

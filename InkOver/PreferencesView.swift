@@ -22,6 +22,13 @@ struct PreferencesView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                Toggle("Auto-clear ink", isOn: $preferences.autoClearEnabled)
+                Picker("Auto-clear delay", selection: $preferences.autoClearDelay) {
+                    ForEach(AutoClearDelay.allCases) { delay in
+                        Text(delay.title).tag(delay)
+                    }
+                }
+                .disabled(!preferences.autoClearEnabled)
                 LabeledContent("Toggle annotation") {
                     if session.shortcutError != nil {
                         Text("Shortcut unavailable")
@@ -86,6 +93,6 @@ struct PreferencesView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 435, height: 540)
+        .frame(width: 435, height: 600)
     }
 }

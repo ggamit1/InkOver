@@ -3,12 +3,10 @@ import SwiftUI
 struct DrawingToolbar: View {
     @ObservedObject var session: AnnotationSession
     @ObservedObject var preferences: AppPreferences
+    @ObservedObject var overlay: OverlayWindowController
     let dock: ToolbarDock
     let availableSize: CGSize
     let onBoard: () -> Void
-    let onHide: () -> Void
-    let onDone: () -> Void
-    let onDrag: (Bool) -> Void
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -18,9 +16,25 @@ struct DrawingToolbar: View {
     }
     private let outerPadding: CGFloat = 12
     private let selection = Color.primary.opacity(0.12)
+    private let glow = Color(red: 0.37, green: 0.69, blue: 1)
+    private let violet = Color(red: 0.63, green: 0.48, blue: 1)
 
     var body: some View {
         glassControls
+            .background {
+                shape.fill(glow.opacity(0.28))
+                    .blur(radius: 9)
+                    .allowsHitTesting(false)
+            }
+            .overlay {
+                shape.strokeBorder(
+                    LinearGradient(colors: [.white.opacity(0.72), glow.opacity(0.35), violet.opacity(0.70)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing),
+                    lineWidth: 1
+                )
+                .allowsHitTesting(false)
+            }
+            .shadow(color: .black.opacity(0.27), radius: 8, y: 4)
             .padding(outerPadding)
             .fixedSize()
             .environment(\.colorScheme, session.isBoard ? .dark : colorScheme)
@@ -32,7 +46,7 @@ struct DrawingToolbar: View {
     private var glassControls: some View {
         #if compiler(>=6.2)
         if #available(macOS 26.0, *) {
-            controls.glassEffect(.regular.interactive(), in: shape)
+            controls.glassEffect(.regular.tint(glow.opacity(0.15)).interactive(), in: shape)
         } else {
             frostedControls
         }
@@ -43,12 +57,13 @@ struct DrawingToolbar: View {
 
     private var frostedControls: some View {
         controls
-            .background(.regularMaterial, in: shape)
-            .overlay {
-                shape.strokeBorder(.primary.opacity(0.12))
-                    .allowsHitTesting(false)
+            .background {
+                shape.fill(.regularMaterial)
+                shape.fill(
+                    LinearGradient(colors: [glow.opacity(0.14), .clear, violet.opacity(0.19)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
             }
-            .shadow(color: .black.opacity(0.22), radius: 12, y: 5)
     }
 
     @ViewBuilder
@@ -73,6 +88,8 @@ struct DrawingToolbar: View {
                 .scrollIndicators(.visible)
                 .accessibilityLabel("Scrollable drawing tools")
             }
+            autoClear
+            screenshot
             hide
             done
         }
@@ -113,6 +130,10 @@ struct DrawingToolbar: View {
                 .accessibilityLabel("Scrollable drawing tools")
             }
             sidebarDivider
+            HStack(spacing: 6) {
+                autoClear
+                screenshot
+            }
             HStack(spacing: 6) {
                 hide
                 done
@@ -155,12 +176,7 @@ struct DrawingToolbar: View {
             .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(.secondary)
             .frame(width: 29, height: 43)
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in onDrag(false) }
-                    .onEnded { _ in onDrag(true) }
-            )
+            .overlay { ToolbarGrip(onDrag: overlay.moveToolbar) }
             .accessibilityLabel("Move toolbar")
             .help("Drag to move the toolbar")
     }
@@ -341,12 +357,37 @@ struct DrawingToolbar: View {
         .help(help)
     }
 
+    private var autoClear: some View {
+        action("Auto-Clear", symbol: "timer", selected: preferences.autoClearEnabled,
+               help: preferences.autoClearEnabled
+                   ? "Turn off auto-clear"
+                   : "Clear ink after \(preferences.autoClearDelay.title) of inactivity") {
+            preferences.autoClearEnabled.toggle()
+        }
+    }
+
+    private var screenshot: some View {
+        let screenshotStatus = overlay.screenshotStatus
+        return Button(action: overlay.takeScreenshot) {
+            Label(screenshotStatus.title, systemImage: screenshotStatus.symbol)
+                .font(.system(size: 11, weight: .medium))
+                .frame(width: 82, height: 29)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(ToolbarButtonStyle())
+        .disabled(screenshotStatus == .capturing)
+        .accessibilityLabel("Screenshot")
+        .accessibilityValue(screenshotStatus.help)
+        .help(screenshotStatus.help)
+    }
+
     private var hide: some View {
-        action("Hide", symbol: "eye.slash", help: "Hide toolbar. Show it from the InkOver menu.", perform: onHide)
+        action("Hide", symbol: "eye.slash", help: "Hide toolbar. Show it from the ScreenInklet menu.",
+               perform: overlay.hideToolbar)
     }
 
     private var done: some View {
-        Button(action: onDone) {
+        Button(action: overlay.stop) {
             Label("Done", systemImage: "checkmark")
                 .fixedSize()
                 .font(.system(size: 11, weight: .semibold))
@@ -360,6 +401,73 @@ struct DrawingToolbar: View {
 
     private var divider: some View {
         Rectangle().fill(.primary.opacity(0.13)).frame(width: 1, height: 18)
+    }
+}
+
+enum ScreenshotStatus: Equatable {
+    case ready, capturing, copied, failed(String)
+
+    var title: String {
+        switch self {
+        case .ready: "Screenshot"
+        case .capturing: "Copying…"
+        case .copied: "Copied"
+        case .failed: "Failed"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .ready: "camera"
+        case .capturing: "hourglass"
+        case .copied: "checkmark"
+        case .failed: "exclamationmark.triangle"
+        }
+    }
+
+    var help: String {
+        switch self {
+        case .ready: "Copy the annotated display to the clipboard"
+        case .capturing: "Capturing screenshot"
+        case .copied: "Screenshot copied to the clipboard"
+        case .failed(let message): message
+        }
+    }
+}
+
+private struct ToolbarGrip: NSViewRepresentable {
+    let onDrag: (NSEvent) -> Void
+
+    func makeNSView(context: Context) -> GripView {
+        GripView()
+    }
+
+    func updateNSView(_ view: GripView, context: Context) {
+        view.onDrag = onDrag
+    }
+
+    final class GripView: NSView {
+        var onDrag: ((NSEvent) -> Void)?
+
+        override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+        override func resetCursorRects() {
+            addCursorRect(bounds, cursor: .openHand)
+        }
+
+        override func mouseDown(with event: NSEvent) {
+            NSCursor.closedHand.set()
+            onDrag?(event)
+        }
+
+        override func mouseDragged(with event: NSEvent) {
+            onDrag?(event)
+        }
+
+        override func mouseUp(with event: NSEvent) {
+            NSCursor.openHand.set()
+            onDrag?(event)
+        }
     }
 }
 

@@ -3,7 +3,7 @@ import SwiftUI
 
 @main
 struct AnnotationApp: App {
-    @NSApplicationDelegateAdaptor(InkOverDelegate.self) private var delegate
+    @NSApplicationDelegateAdaptor(ScreenInkletDelegate.self) private var delegate
 
     var body: some Scene {
         MenuBarExtra {
@@ -20,12 +20,19 @@ struct AnnotationApp: App {
 }
 
 @MainActor
-final class InkOverDelegate: NSObject, NSApplicationDelegate {
-    let session = AnnotationSession()
-    let preferences = AppPreferences()
+final class ScreenInkletDelegate: NSObject, NSApplicationDelegate {
+    let session: AnnotationSession
+    let preferences: AppPreferences
     private let ring = CursorRingController()
     private let shortcut = ShortcutController()
     lazy var overlay = OverlayWindowController(session: session, preferences: preferences)
+
+    override init() {
+        let preferences = AppPreferences()
+        self.preferences = preferences
+        session = AnnotationSession(preferences: preferences)
+        super.init()
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         ring.observe(preferences)
@@ -44,12 +51,12 @@ private struct StatusLabel: View {
 
     var body: some View {
         Image(systemName: session.isAnnotating ? "pencil.tip.crop.circle.fill" : "pencil.tip.crop.circle")
-            .accessibilityLabel(session.isAnnotating ? "InkOver, annotating" : "InkOver")
+            .accessibilityLabel(session.isAnnotating ? "ScreenInklet, annotating" : "ScreenInklet")
     }
 }
 
 private struct StatusMenu: View {
-    let delegate: InkOverDelegate
+    let delegate: ScreenInkletDelegate
     @ObservedObject var session: AnnotationSession
     @ObservedObject var preferences: AppPreferences
     @Environment(\.openSettings) private var openSettings
@@ -76,6 +83,8 @@ private struct StatusMenu: View {
                 }
             }
             .pickerStyle(.inline)
+            Divider()
+            Button("Reset to Selected Edge", action: delegate.overlay.resetToolbarPosition)
         }
 
         Divider()
@@ -88,7 +97,7 @@ private struct StatusMenu: View {
         .keyboardShortcut(",", modifiers: .command)
 
         Divider()
-        Button("Quit InkOver") { NSApp.terminate(nil) }
+        Button("Quit ScreenInklet") { NSApp.terminate(nil) }
             .keyboardShortcut("q", modifiers: .command)
     }
 }

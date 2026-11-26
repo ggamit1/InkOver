@@ -36,7 +36,7 @@ final class CursorRingController {
         let ring = RingView()
         ring.color = color
         window.contentView = ring
-        window.title = "InkOver Cursor Ring"
+        window.title = "ScreenInklet Cursor Ring"
         window.isReleasedWhenClosed = false
         window.backgroundColor = .clear
         window.isOpaque = false

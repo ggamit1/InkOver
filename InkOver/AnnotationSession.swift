@@ -19,8 +19,18 @@ final class AnnotationSession: ObservableObject {
     private var previousDrawingTool: DrawingTool = .pen
     private var displayID: CGDirectDisplayID?
     private var canvases: [Surface: Canvas] = [:]
+    private var autoClearDelay: AutoClearDelay?
+    private var autoClearObserver: AnyCancellable?
+    private var autoClearTasks: [Surface: Task<Void, Never>] = [:]
 
     static let eraserRadius: CGFloat = 12
+
+    init(preferences: AppPreferences) {
+        autoClearObserver = preferences.$autoClearEnabled.combineLatest(preferences.$autoClearDelay)
+            .map { enabled, delay in enabled ? delay : nil }
+            .removeDuplicates()
+            .sink { [weak self] delay in self?.updateAutoClear(delay) }
+    }
 
     private struct Surface: Hashable {
         let displayID: CGDirectDisplayID
@@ -89,6 +99,9 @@ final class AnnotationSession: ObservableObject {
 
     func retainDisplays(_ displayIDs: Set<CGDirectDisplayID>) {
         canvases = canvases.filter { displayIDs.contains($0.key.displayID) }
+        for surface in Array(autoClearTasks.keys) where !displayIDs.contains(surface.displayID) {
+            autoClearTasks.removeValue(forKey: surface)?.cancel()
+        }
     }
 
     func begin(at point: CGPoint, color: InkColor, width: InkWidth, bounds: CGRect) {
@@ -122,9 +135,11 @@ final class AnnotationSession: ObservableObject {
                 let removed = erasedIndices.sorted().map { IndexedMark(index: $0, mark: canvas.marks[$0]) }
                 canvases[surface]?.record(.remove(removed))
             }
+            scheduleAutoClear(on: surface)
         } else if var mark = pending {
             mark.update(to: point)
             if mark.canCommit { append(mark, to: surface) }
+            scheduleAutoClear(on: surface)
         }
         refresh()
     }
@@ -135,26 +150,58 @@ final class AnnotationSession: ObservableObject {
         guard !cleaned.isEmpty else { return }
         append(DrawingMark(tool: .text, color: color, width: .regular,
                            start: point, text: cleaned, textSize: size), to: surface)
+        scheduleAutoClear(on: surface)
         refresh()
     }
 
     func undo() {
         guard let surface else { return }
         canvases[surface]?.undo()
+        scheduleAutoClear(on: surface)
         refresh()
     }
 
     func redo() {
         guard let surface else { return }
         canvases[surface]?.redo()
+        scheduleAutoClear(on: surface)
         refresh()
     }
 
     func clear() {
-        guard let surface, let canvas = canvases[surface], !canvas.marks.isEmpty else { return }
+        guard let surface else { return }
+        clear(on: surface)
+    }
+
+    private func clear(on surface: Surface) {
+        guard let canvas = canvases[surface], !canvas.marks.isEmpty else { return }
         let removed = canvas.marks.enumerated().map { IndexedMark(index: $0.offset, mark: $0.element) }
         canvases[surface]?.record(.remove(removed))
-        refresh()
+        autoClearTasks.removeValue(forKey: surface)?.cancel()
+        if surface == self.surface { refresh() }
+    }
+
+    private func updateAutoClear(_ delay: AutoClearDelay?) {
+        autoClearDelay = delay
+        for task in autoClearTasks.values { task.cancel() }
+        autoClearTasks.removeAll()
+        for surface in canvases.keys { scheduleAutoClear(on: surface) }
+    }
+
+    private func scheduleAutoClear(on surface: Surface) {
+        autoClearTasks.removeValue(forKey: surface)?.cancel()
+        guard let autoClearDelay, let canvas = canvases[surface], !canvas.marks.isEmpty else { return }
+        autoClearTasks[surface] = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(autoClearDelay.rawValue))
+            guard !Task.isCancelled, let self else { return }
+            autoClearTasks.removeValue(forKey: surface)
+            if surface == self.surface, pending != nil || eraserPoint != nil {
+                // Keep the mark indices stable until the active gesture finishes.
+                scheduleAutoClear(on: surface)
+            } else {
+                clear(on: surface)
+            }
+        }
     }
 
     private func erase(to point: CGPoint, bounds: CGRect) {

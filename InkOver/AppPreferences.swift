@@ -60,6 +60,21 @@ enum ToolbarDock: String, CaseIterable, Identifiable {
     var isSide: Bool { self == .left || self == .right }
 }
 
+struct ToolbarPlacement {
+    let displayID: CGDirectDisplayID
+    let position: CGPoint
+}
+
+enum AutoClearDelay: Int, CaseIterable, Identifiable {
+    case fiveSeconds = 5
+    case tenSeconds = 10
+    case thirtySeconds = 30
+    case oneMinute = 60
+
+    var id: Self { self }
+    var title: String { "\(rawValue) seconds" }
+}
+
 enum BoardOrientation: String, CaseIterable, Identifiable {
     case horizontal, vertical
 
@@ -94,6 +109,9 @@ final class AppPreferences: ObservableObject {
         static let inkWidth = "inkWidth"
         static let inkTextSize = "inkTextSize"
         static let toolbarDock = "toolbarDock"
+        static let toolbarPlacement = "toolbarPlacement"
+        static let autoClearEnabled = "autoClearEnabled"
+        static let autoClearDelay = "autoClearDelay"
         static let boardOrientation = "boardOrientation"
         static let boardBackground = "boardBackground"
         static let ringEnabled = "ringEnabled"
@@ -119,6 +137,35 @@ final class AppPreferences: ObservableObject {
 
     @Published var toolbarDock: ToolbarDock {
         didSet { defaults.set(toolbarDock.rawValue, forKey: Key.toolbarDock) }
+    }
+
+    var toolbarPlacement: ToolbarPlacement? {
+        get {
+            guard let saved = defaults.dictionary(forKey: Key.toolbarPlacement),
+                  let display = saved["display"] as? UInt32,
+                  let x = saved["x"] as? Double, (0...1).contains(x),
+                  let y = saved["y"] as? Double, (0...1).contains(y) else { return nil }
+            return ToolbarPlacement(displayID: display, position: CGPoint(x: x, y: y))
+        }
+        set {
+            if let newValue {
+                defaults.set([
+                    "display": newValue.displayID,
+                    "x": newValue.position.x,
+                    "y": newValue.position.y
+                ] as [String: Any], forKey: Key.toolbarPlacement)
+            } else {
+                defaults.removeObject(forKey: Key.toolbarPlacement)
+            }
+        }
+    }
+
+    @Published var autoClearEnabled: Bool {
+        didSet { defaults.set(autoClearEnabled, forKey: Key.autoClearEnabled) }
+    }
+
+    @Published var autoClearDelay: AutoClearDelay {
+        didSet { defaults.set(autoClearDelay.rawValue, forKey: Key.autoClearDelay) }
     }
 
     @Published var boardOrientation: BoardOrientation {
@@ -147,6 +194,8 @@ final class AppPreferences: ObservableObject {
         inkWidth = InkWidth(rawValue: defaults.integer(forKey: Key.inkWidth)) ?? .regular
         inkTextSize = InkTextSize(rawValue: defaults.integer(forKey: Key.inkTextSize)) ?? .medium
         toolbarDock = ToolbarDock(rawValue: defaults.string(forKey: Key.toolbarDock) ?? "") ?? .right
+        autoClearEnabled = defaults.bool(forKey: Key.autoClearEnabled)
+        autoClearDelay = AutoClearDelay(rawValue: defaults.integer(forKey: Key.autoClearDelay)) ?? .tenSeconds
         boardOrientation = BoardOrientation(rawValue: defaults.string(forKey: Key.boardOrientation) ?? "") ?? .horizontal
         boardBackground = BoardBackground(rawValue: defaults.string(forKey: Key.boardBackground) ?? "") ?? .dark
         ringEnabled = defaults.bool(forKey: Key.ringEnabled)

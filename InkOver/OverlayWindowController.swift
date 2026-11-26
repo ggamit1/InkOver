@@ -2,10 +2,13 @@ import AppKit
 import Carbon.HIToolbox
 import Combine
 import QuartzCore
+import ScreenCaptureKit
 import SwiftUI
 
 @MainActor
-final class OverlayWindowController: NSObject, NSWindowDelegate {
+final class OverlayWindowController: NSObject, NSWindowDelegate, ObservableObject {
+    @Published private(set) var screenshotStatus: ScreenshotStatus = .ready
+
     private let session: AnnotationSession
     private let preferences: AppPreferences
     private var panel: AnnotationPanel?
@@ -14,8 +17,8 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
     private var toolObserver: AnyCancellable?
     private var dockObserver: AnyCancellable?
     private var toolbarArea = CGRect.zero
-    private var draggedToolbarOrigin: CGPoint?
     private var dragStart: (pointer: CGPoint, origin: CGPoint)?
+    private var screenshotTask: Task<Void, Never>?
 
     init(session: AnnotationSession, preferences: AppPreferences) {
         self.session = session
@@ -48,7 +51,7 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
               let displayID = screen.displayID else { return }
 
         let menuLevel = NSWindow.Level.mainMenu.rawValue
-        let window = AnnotationPanel(frame: screen.frame, title: "InkOver Annotation", level: menuLevel - 2)
+        let window = AnnotationPanel(frame: screen.frame, title: "ScreenInklet Annotation", level: menuLevel - 2)
         let visibleArea = screen.visibleFrame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY)
         let canvas = DrawingCanvasView(session: session, preferences: preferences, visibleArea: visibleArea)
         window.contentView = canvas
@@ -74,7 +77,6 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
             self?.updateInput(for: tool)
         }
 
-        toolbarArea = screen.visibleFrame
         showToolbar(dock: preferences.toolbarDock)
     }
 
@@ -88,41 +90,54 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
         }
     }
 
-    private func showToolbar(dock: ToolbarDock) {
-        guard toolbarPanel == nil, let canvas else { return }
+    private func showToolbar(dock: ToolbarDock, animated: Bool = true) {
+        guard toolbarPanel == nil, let canvas, let annotationScreen = panel?.screen else { return }
+        let placement = preferences.toolbarPlacement
+        let floatingScreen = placement.flatMap { placement in
+            NSScreen.screens.first { $0.displayID == placement.displayID }
+        }
+        toolbarArea = (floatingScreen ?? annotationScreen).visibleFrame
         let toolbar = ToolbarHostingView(rootView: DrawingToolbar(
-            session: session, preferences: preferences, dock: dock, availableSize: toolbarArea.size,
+            session: session, preferences: preferences, overlay: self, dock: dock, availableSize: toolbarArea.size,
             onBoard: { [weak canvas, weak session] in
                 canvas?.cancelText()
                 session?.toggleBoard()
-            },
-            onHide: { [weak self] in self?.hideToolbar() },
-            onDone: { [weak self] in self?.stop() },
-            onDrag: { [weak self] ended in self?.moveToolbar(ended: ended) }
+            }
         ))
         toolbar.sizingOptions = .intrinsicContentSize
         let size = toolbar.fittingSize
-        let origin = toolbarOrigin(for: size, dock: dock)
+        let origin = toolbarOrigin(for: size, dock: dock, position: floatingScreen == nil ? nil : placement?.position)
         let frame = CGRect(origin: origin, size: size)
-        let toolbarPanel = FloatingPanel(frame: frame, title: "InkOver Toolbar",
+        let toolbarPanel = FloatingPanel(frame: frame, title: "ScreenInklet Toolbar",
                                          level: NSWindow.Level.mainMenu.rawValue - 1)
         toolbarPanel.contentView = toolbar
         self.toolbarPanel = toolbarPanel
         session.isToolbarVisible = true
-        revealToolbar(toolbarPanel)
+        if animated { revealToolbar(toolbarPanel) } else { toolbarPanel.orderFrontRegardless() }
+    }
+
+    func resetToolbarPosition() {
+        updateToolbarDock(preferences.toolbarDock)
     }
 
     private func updateToolbarDock(_ dock: ToolbarDock) {
+        preferences.toolbarPlacement = nil
+        rebuildToolbar(dock: dock)
+    }
+
+    private func rebuildToolbar(dock: ToolbarDock) {
         dragStart = nil
-        draggedToolbarOrigin = nil
         guard let toolbarPanel else { return }
         self.toolbarPanel = nil
         toolbarPanel.close()
-        showToolbar(dock: dock)
+        showToolbar(dock: dock, animated: false)
     }
 
-    private func toolbarOrigin(for size: CGSize, dock: ToolbarDock) -> CGPoint {
-        if let draggedToolbarOrigin { return clampedToolbarOrigin(draggedToolbarOrigin, size: size) }
+    private func toolbarOrigin(for size: CGSize, dock: ToolbarDock, position: CGPoint?) -> CGPoint {
+        if let position {
+            return CGPoint(x: toolbarArea.minX + position.x * max(0, toolbarArea.width - size.width),
+                           y: toolbarArea.minY + position.y * max(0, toolbarArea.height - size.height))
+        }
         let centerX = toolbarArea.midX - size.width / 2
         let inset: CGFloat = 10
         let origin: CGPoint
@@ -142,6 +157,9 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
     @objc func stop() {
         guard let panel else { return }
         self.panel = nil
+        screenshotTask?.cancel()
+        screenshotTask = nil
+        screenshotStatus = .ready
         toolObserver = nil
         canvas?.cancelText()
         panel.delegate = nil
@@ -151,7 +169,6 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
         session.deactivate()
 
         hideToolbar()
-        draggedToolbarOrigin = nil
     }
 
     private func updateInput(for tool: DrawingTool) {
@@ -187,7 +204,7 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
         }
     }
 
-    private func hideToolbar() {
+    func hideToolbar() {
         guard let toolbar = toolbarPanel else { return }
         toolbarPanel = nil
         dragStart = nil
@@ -207,25 +224,101 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
         }
     }
 
-    private func moveToolbar(ended: Bool) {
+    func moveToolbar(with event: NSEvent) {
         guard let toolbarPanel else { return }
-        let pointer = NSEvent.mouseLocation
-        guard let start = dragStart else {
-            if !ended { dragStart = (pointer, toolbarPanel.frame.origin) }
+        if event.type == .leftMouseDown {
+            let pointer = toolbarPanel.convertPoint(toScreen: event.locationInWindow)
+            dragStart = (pointer, toolbarPanel.frame.origin)
             return
         }
-        if ended { dragStart = nil }
+        guard let start = dragStart else { return }
+        let pointer = NSEvent.mouseLocation
         let proposed = CGPoint(x: start.origin.x + pointer.x - start.pointer.x,
                                y: start.origin.y + pointer.y - start.pointer.y)
+        if event.type == .leftMouseDragged {
+            toolbarPanel.setFrameOrigin(proposed)
+            return
+        }
+        dragStart = nil
+        guard pointer != start.pointer || toolbarPanel.frame.origin != start.origin,
+              let screen = NSScreen.screens.first(where: { $0.frame.contains(pointer) }) ?? toolbarPanel.screen,
+              let displayID = screen.displayID else { return }
+
+        let previousSize = toolbarArea.size
+        toolbarArea = screen.visibleFrame
         let origin = clampedToolbarOrigin(proposed, size: toolbarPanel.frame.size)
-        draggedToolbarOrigin = origin
-        toolbarPanel.setFrameOrigin(origin)
+        let travelX = max(0, toolbarArea.width - toolbarPanel.frame.width)
+        let travelY = max(0, toolbarArea.height - toolbarPanel.frame.height)
+        let position = CGPoint(x: travelX > 0 ? (origin.x - toolbarArea.minX) / travelX : 0.5,
+                               y: travelY > 0 ? (origin.y - toolbarArea.minY) / travelY : 0.5)
+        preferences.toolbarPlacement = ToolbarPlacement(displayID: displayID, position: position)
+        if previousSize == toolbarArea.size {
+            toolbarPanel.setFrameOrigin(origin)
+        } else {
+            rebuildToolbar(dock: preferences.toolbarDock)
+        }
     }
 
     private func clampedToolbarOrigin(_ origin: CGPoint, size: CGSize) -> CGPoint {
         let x = min(max(origin.x, toolbarArea.minX), max(toolbarArea.minX, toolbarArea.maxX - size.width))
         let y = min(max(origin.y, toolbarArea.minY), max(toolbarArea.minY, toolbarArea.maxY - size.height))
         return CGPoint(x: x, y: y)
+    }
+
+    func takeScreenshot() {
+        guard screenshotStatus != .capturing else { return }
+        screenshotTask?.cancel()
+        screenshotStatus = .capturing
+        screenshotTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await copyScreenshot()
+                guard !Task.isCancelled else { return }
+                screenshotStatus = .copied
+            } catch {
+                guard !Task.isCancelled else { return }
+                screenshotStatus = .failed(error.localizedDescription)
+            }
+            AccessibilityNotification.Announcement(screenshotStatus.help).post()
+            if screenshotStatus == .copied {
+                try? await Task.sleep(for: .seconds(3))
+                guard !Task.isCancelled else { return }
+                screenshotStatus = .ready
+            }
+            screenshotTask = nil
+        }
+    }
+
+    private func copyScreenshot() async throws {
+        try Task.checkCancellation()
+        guard let panel, let displayID = panel.screen?.displayID else { throw ScreenshotError.unavailable }
+        canvas?.displayIfNeeded()
+        let content: SCShareableContent
+        do {
+            content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        } catch {
+            if !CGPreflightScreenCaptureAccess() { throw ScreenshotError.permission }
+            throw error
+        }
+        guard panel === self.panel, let display = content.displays.first(where: { $0.displayID == displayID }) else {
+            throw ScreenshotError.unavailable
+        }
+        let excluded = content.windows.filter { $0.windowID == CGWindowID(toolbarPanel?.windowNumber ?? 0) }
+        let filter = SCContentFilter(display: display, excludingWindows: excluded)
+        let configuration = SCStreamConfiguration()
+        let scale = CGFloat(filter.pointPixelScale)
+        configuration.width = Int((filter.contentRect.width * scale).rounded())
+        configuration.height = Int((filter.contentRect.height * scale).rounded())
+        configuration.showsCursor = false
+        let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
+        try Task.checkCancellation()
+        guard panel === self.panel else { throw ScreenshotError.unavailable }
+        guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
+            throw ScreenshotError.clipboard
+        }
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        guard pasteboard.setData(png, forType: .png) else { throw ScreenshotError.clipboard }
     }
 
     @objc private func screensDidChange() {
@@ -236,6 +329,18 @@ final class OverlayWindowController: NSObject, NSWindowDelegate {
     func windowDidResignKey(_ notification: Notification) {
         if let window = notification.object as? NSWindow, window === panel, !window.ignoresMouseEvents {
             stop()
+        }
+    }
+}
+
+private enum ScreenshotError: LocalizedError {
+    case permission, unavailable, clipboard
+
+    var errorDescription: String? {
+        switch self {
+        case .permission: "Allow ScreenInklet to record the screen in System Settings, then try again."
+        case .unavailable: "The annotation display is unavailable."
+        case .clipboard: "The screenshot could not be copied to the clipboard."
         }
     }
 }

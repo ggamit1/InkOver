@@ -31,7 +31,7 @@
 		6DCBC042427B7A46EF62AD5E /* ShortcutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutController.swift; sourceTree = "<group>"; };
 		79B0304DA70AE4672A797266 /* InkOver.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = InkOver.icns; sourceTree = "<group>"; };
 		81CCBF854C5F7B7E648F7AA6 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
-		8BFC6E46A05E87DB2521BC4A /* InkOver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InkOver.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BFC6E46A05E87DB2521BC4A /* ScreenInklet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenInklet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACB01926141BDE415F7734C3 /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
 		ACB2EFC8E27A32CB78E52BD2 /* CursorRingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorRingController.swift; sourceTree = "<group>"; };
 		FE9590CC13E4E6C7E75ACD11 /* AnnotationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationApp.swift; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 		FE0A091FDBFB3E9C31B7A1BD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8BFC6E46A05E87DB2521BC4A /* InkOver.app */,
+				8BFC6E46A05E87DB2521BC4A /* ScreenInklet.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E86A3881BA20535A5777936B /* InkOver */ = {
+		E86A3881BA20535A5777936B /* ScreenInklet */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "InkOver" */;
+			buildConfigurationList = 002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "ScreenInklet" */;
 			buildPhases = (
 				2EB56BE3C2D93CDAB0C52E67 /* Sources */,
 				87DF60DE337FB58864343E39 /* Resources */,
@@ -96,9 +96,9 @@
 			);
 			dependencies = (
 			);
-			name = InkOver;
-			productName = InkOver;
-			productReference = 8BFC6E46A05E87DB2521BC4A /* InkOver.app */;
+			name = ScreenInklet;
+			productName = ScreenInklet;
+			productReference = 8BFC6E46A05E87DB2521BC4A /* ScreenInklet.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -128,7 +128,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E86A3881BA20535A5777936B /* InkOver */,
+				E86A3881BA20535A5777936B /* ScreenInklet */,
 			);
 		};
 /* End PBXProject section */
@@ -174,7 +174,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InkOver/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = InkOver;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenInklet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -182,7 +182,7 @@
 				);
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.inkover.InkOver;
-				PRODUCT_NAME = InkOver;
+				PRODUCT_NAME = ScreenInklet;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -222,7 +222,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InkOver/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = InkOver;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenInklet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -230,7 +230,7 @@
 				);
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.inkover.InkOver;
-				PRODUCT_NAME = InkOver;
+				PRODUCT_NAME = ScreenInklet;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
@@ -238,7 +238,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "InkOver" */ = {
+		002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "ScreenInklet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0EBCCE7E849217E0F38EE944 /* Debug */,
