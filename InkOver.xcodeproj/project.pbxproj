@@ -1,0 +1,262 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BAF7528CB492BD12F09DDB9 /* DrawingToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6106858209CBDBA3A3F3AA1B /* DrawingToolbar.swift */; };
+		37299C470722367737D6D43D /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175933613963511F6A62DA0B /* AppPreferences.swift */; };
+		49D3A893F48C0876E98A3E1E /* DrawingMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CB72507A0EE5F1EB62CBB1 /* DrawingMark.swift */; };
+		578E0C9D1435DCAF49741720 /* ShortcutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCBC042427B7A46EF62AD5E /* ShortcutController.swift */; };
+		58A48F1B2E3AFA3D448C47A6 /* DrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB01926141BDE415F7734C3 /* DrawingCanvasView.swift */; };
+		78E828EA66D685559003A34C /* AnnotationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B38D5B62AEA941212197590 /* AnnotationSession.swift */; };
+		960902035AFE6A4986A4FA3E /* CursorRingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB2EFC8E27A32CB78E52BD2 /* CursorRingController.swift */; };
+		A6D5475D5482EEFCF9C581E8 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CCBF854C5F7B7E648F7AA6 /* PreferencesView.swift */; };
+		B6B5F3BADD2FE17A1E8C5813 /* AnnotationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE9590CC13E4E6C7E75ACD11 /* AnnotationApp.swift */; };
+		D73935A1B7D06871A2729AA8 /* InkOver.icns in Resources */ = {isa = PBXBuildFile; fileRef = 79B0304DA70AE4672A797266 /* InkOver.icns */; };
+		F5F708B237D18AB2D97BBD29 /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50464D761C64D7D0B95C2236 /* OverlayWindowController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0B38D5B62AEA941212197590 /* AnnotationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationSession.swift; sourceTree = "<group>"; };
+		175933613963511F6A62DA0B /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
+		22CB72507A0EE5F1EB62CBB1 /* DrawingMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingMark.swift; sourceTree = "<group>"; };
+		50464D761C64D7D0B95C2236 /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		599BEE486356E933FFC14E26 /* InkOver.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InkOver.entitlements; sourceTree = "<group>"; };
+		6106858209CBDBA3A3F3AA1B /* DrawingToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingToolbar.swift; sourceTree = "<group>"; };
+		68E77A9D7BC78A97D4F4E27B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6DCBC042427B7A46EF62AD5E /* ShortcutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutController.swift; sourceTree = "<group>"; };
+		79B0304DA70AE4672A797266 /* InkOver.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = InkOver.icns; sourceTree = "<group>"; };
+		81CCBF854C5F7B7E648F7AA6 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		8BFC6E46A05E87DB2521BC4A /* InkOver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InkOver.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACB01926141BDE415F7734C3 /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
+		ACB2EFC8E27A32CB78E52BD2 /* CursorRingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorRingController.swift; sourceTree = "<group>"; };
+		FE9590CC13E4E6C7E75ACD11 /* AnnotationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		540A2D7A0AE275E9F2EB7D79 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				79B0304DA70AE4672A797266 /* InkOver.icns */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7AC6C1024B09C2E9D0A4A5D5 /* InkOver */ = {
+			isa = PBXGroup;
+			children = (
+				FE9590CC13E4E6C7E75ACD11 /* AnnotationApp.swift */,
+				0B38D5B62AEA941212197590 /* AnnotationSession.swift */,
+				175933613963511F6A62DA0B /* AppPreferences.swift */,
+				ACB2EFC8E27A32CB78E52BD2 /* CursorRingController.swift */,
+				ACB01926141BDE415F7734C3 /* DrawingCanvasView.swift */,
+				22CB72507A0EE5F1EB62CBB1 /* DrawingMark.swift */,
+				6106858209CBDBA3A3F3AA1B /* DrawingToolbar.swift */,
+				50464D761C64D7D0B95C2236 /* OverlayWindowController.swift */,
+				81CCBF854C5F7B7E648F7AA6 /* PreferencesView.swift */,
+				6DCBC042427B7A46EF62AD5E /* ShortcutController.swift */,
+				68E77A9D7BC78A97D4F4E27B /* Info.plist */,
+				599BEE486356E933FFC14E26 /* InkOver.entitlements */,
+				540A2D7A0AE275E9F2EB7D79 /* Resources */,
+			);
+			path = InkOver;
+			sourceTree = "<group>";
+		};
+		C649629229F6187C3D12CE69 = {
+			isa = PBXGroup;
+			children = (
+				7AC6C1024B09C2E9D0A4A5D5 /* InkOver */,
+				FE0A091FDBFB3E9C31B7A1BD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FE0A091FDBFB3E9C31B7A1BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8BFC6E46A05E87DB2521BC4A /* InkOver.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E86A3881BA20535A5777936B /* InkOver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "InkOver" */;
+			buildPhases = (
+				2EB56BE3C2D93CDAB0C52E67 /* Sources */,
+				87DF60DE337FB58864343E39 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InkOver;
+			productName = InkOver;
+			productReference = 8BFC6E46A05E87DB2521BC4A /* InkOver.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F6F4DA8D93E88A08220E03B7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					E86A3881BA20535A5777936B = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = EA4CB304C2116E38EA8A7F98 /* Build configuration list for PBXProject "InkOver" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C649629229F6187C3D12CE69;
+			productRefGroup = FE0A091FDBFB3E9C31B7A1BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E86A3881BA20535A5777936B /* InkOver */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		87DF60DE337FB58864343E39 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D73935A1B7D06871A2729AA8 /* InkOver.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2EB56BE3C2D93CDAB0C52E67 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6B5F3BADD2FE17A1E8C5813 /* AnnotationApp.swift in Sources */,
+				78E828EA66D685559003A34C /* AnnotationSession.swift in Sources */,
+				37299C470722367737D6D43D /* AppPreferences.swift in Sources */,
+				960902035AFE6A4986A4FA3E /* CursorRingController.swift in Sources */,
+				58A48F1B2E3AFA3D448C47A6 /* DrawingCanvasView.swift in Sources */,
+				49D3A893F48C0876E98A3E1E /* DrawingMark.swift in Sources */,
+				0BAF7528CB492BD12F09DDB9 /* DrawingToolbar.swift in Sources */,
+				F5F708B237D18AB2D97BBD29 /* OverlayWindowController.swift in Sources */,
+				A6D5475D5482EEFCF9C581E8 /* PreferencesView.swift in Sources */,
+				578E0C9D1435DCAF49741720 /* ShortcutController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0EBCCE7E849217E0F38EE944 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = InkOver/InkOver.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InkOver/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InkOver;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.inkover.InkOver;
+				PRODUCT_NAME = InkOver;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		24B7DFA423B1C8A2130AE03E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		40609A412964FFB79DAE9C3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		7991A9F77295B3B6F9BF6599 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = InkOver/InkOver.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InkOver/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InkOver;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.inkover.InkOver;
+				PRODUCT_NAME = InkOver;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		002C68F65F4A1FB0C52F58B6 /* Build configuration list for PBXNativeTarget "InkOver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0EBCCE7E849217E0F38EE944 /* Debug */,
+				7991A9F77295B3B6F9BF6599 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA4CB304C2116E38EA8A7F98 /* Build configuration list for PBXProject "InkOver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40609A412964FFB79DAE9C3A /* Debug */,
+				24B7DFA423B1C8A2130AE03E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F6F4DA8D93E88A08220E03B7 /* Project object */;
+}
