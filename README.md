@@ -4,7 +4,7 @@ ScreenInklet is an open-source macOS menu bar app that lets you draw directly on
 
 ## Get ScreenInklet for macOS
 
-[Build ScreenInklet from source](#build-and-run) on **macOS 14 Sonoma or later**. The [InkOver 0.1.0 disk image](Distribution/InkOver-0.1.0.dmg) contains the earlier beta for Apple silicon and Intel Macs.
+[Download ScreenInklet 0.1.0](Distribution/ScreenInklet-0.1.0.dmg) for Apple silicon and Intel Macs running **macOS 14 Sonoma or later**. You can also [build from source](#build-and-run).
 
 ## Screen annotation tools
 
@@ -16,7 +16,7 @@ ScreenInklet is an open-source macOS menu bar app that lets you draw directly on
 
 ## Annotate
 
-Open the [interactive walkthrough](https://ggamit1.github.io/InkOver/tutorial.html) for a step-by-step guide and a practice canvas. For offline use, download [tutorial.html](tutorial.html).
+Open the [interactive walkthrough](https://ggamit1.github.io/InkOver/tutorial.html) for a visual tour and a practice canvas. For offline use, keep [tutorial.html](tutorial.html) and [tutorial-assets](tutorial-assets) together.
 
 1. Move the pointer to the display you want to mark up. Press **Control–Option–Command–I** or choose **Start Annotation** from the ScreenInklet menu bar icon.
 2. Choose **Pen**, **Highlighter**, **Line**, **Arrow**, **Rectangle**, or **Oval**, then drag on the display. Set the ink color and width from the toolbar. Drag the toolbar by its handle. ScreenInklet remembers where you leave it. Use **Toolbar Position** in the menu bar to pick an edge or reset to the selected edge. Left and Right use two columns, while Top and Bottom use a horizontal row. Scroll the tool strip on smaller displays.

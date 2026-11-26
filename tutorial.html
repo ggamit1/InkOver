@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Learn to draw on your Mac screen with ScreenInklet. Follow the quick start, try the drawing tools, and set up a whiteboard or cursor ring.">
+  <meta name="description" content="See what each ScreenInklet drawing tool looks like in macOS screenshots. Practice annotating in your browser and download the app.">
   <title>ScreenInklet Tutorial · Draw on your Mac screen</title>
   <style>
     :root {
       color-scheme: dark;
-      --background: #15181f;
-      --surface: #1d222c;
-      --surface-raised: #272d39;
-      --border: #383f4d;
-      --text: #f7f5f2;
-      --muted: #bec4d1;
-      --ink: #ffb1a0;
+      --background: #12151e;
+      --surface: #1b2030;
+      --surface-raised: #292f43;
+      --border: #363d51;
+      --text: #f7f5fa;
+      --muted: #bfc5d6;
+      --ink: #ffb4a4;
       --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: ui-monospace, "SF Mono", Consolas, monospace;
     }
@@ -26,9 +26,11 @@
     a:hover { text-decoration-thickness: 2px; }
     :focus-visible { outline: 2px solid #ffd386; outline-offset: 4px; }
     button { font: inherit; }
+    figure { margin: 0; }
+    img { display: block; max-width: 100%; height: auto; }
     h1, h2, h3, p { margin: 0; }
     h1, h2, h3 { line-height: 1.12; }
-    h2 { font-size: clamp(1.75rem, 3.7vw, 2.5rem); letter-spacing: -.045em; }
+    h2 { font-size: clamp(1.75rem, 3.7vw, 2.5rem); letter-spacing: -.035em; }
     h3 { font-size: 1.15rem; letter-spacing: -.02em; }
     kbd { font: 600 .88em var(--mono); }
     section[id] { scroll-margin-top: 1.25rem; }
@@ -74,7 +76,7 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(16rem, .9fr) minmax(0, 1.35fr);
+      grid-template-columns: minmax(16rem, .8fr) minmax(0, 1.4fr);
       align-items: center;
       gap: clamp(2rem, 5vw, 4.75rem);
       padding-block: clamp(2.75rem, 7vw, 5.75rem);
@@ -83,7 +85,7 @@
       max-width: 11ch;
       font-size: clamp(2.85rem, 5.8vw, 5.2rem);
       font-weight: 750;
-      letter-spacing: -.07em;
+      letter-spacing: -.055em;
       line-height: .98;
     }
     .hero-copy p { max-width: 37ch; margin-top: 1.35rem; color: var(--muted); font-size: 1.07rem; }
@@ -97,7 +99,15 @@
       text-decoration: none;
     }
     .primary-link:hover { background: #ffc0b2; }
-    .download { font-size: .91rem; font-weight: 650; }
+    .text-link { font-size: .91rem; font-weight: 650; }
+    .hero-image {
+      overflow: hidden;
+      border: 1px solid #545168;
+      border-radius: 1.05rem;
+      background: #201e34;
+      box-shadow: 0 18px 52px #080910a8;
+    }
+    .hero-image img { width: 100%; }
 
     .practice {
       min-width: 0;
@@ -106,16 +116,8 @@
       background: var(--surface);
       box-shadow: 0 16px 48px #06090f53;
     }
-    .practice-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      column-gap: 1rem;
-      padding: .9rem 1rem;
-    }
-    .practice-header h2 { font-size: 1rem; letter-spacing: -.02em; }
-    .practice-header p { color: var(--muted); font-size: .8rem; }
+    .practice-header { padding: .9rem 1rem; }
+    .practice-header h3 { font-size: 1rem; }
     .screen {
       position: relative;
       overflow: hidden;
@@ -168,6 +170,16 @@
       padding: .65rem .85rem .45rem;
     }
     .practice-tools[hidden] { display: none; }
+    .practice-tools fieldset {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .25rem;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
     .practice-tools button {
       min-height: 2.25rem;
       padding: .25rem .66rem;
@@ -180,13 +192,32 @@
       cursor: pointer;
     }
     .practice-tools button[aria-pressed="true"] { background: #45333a; border-color: #926469; color: #ffe2d9; }
-    .practice-tools button:not(:disabled):hover { background: var(--surface-raised); color: var(--text); }
+    .practice-tools button:not(:disabled):not([aria-pressed="true"]):hover { background: var(--surface-raised); color: var(--text); }
     .practice-tools button:disabled { opacity: .45; cursor: default; }
-    .actions { display: flex; gap: .1rem; margin-left: auto; }
+    .practice-tools .swatch { display: grid; width: 2.25rem; padding: 0; place-items: center; }
+    .swatch::before {
+      content: "";
+      width: .92rem;
+      height: .92rem;
+      border-radius: 50%;
+      background: var(--swatch-color);
+    }
+    .swatch[data-color="coral"] { --swatch-color: #ff6572; }
+    .swatch[data-color="amber"] { --swatch-color: #ffc45d; }
+    .swatch[data-color="sky"] { --swatch-color: #71c3ff; }
+    .practice-options { width: 100%; }
+    .actions { display: flex; flex-wrap: wrap; gap: .1rem; margin-left: auto; }
+    .screen canvas.pointer { pointer-events: none; }
     .practice-hint { min-height: 2.3rem; padding: 0 1rem .75rem; color: var(--muted); font-size: .78rem; }
 
     .content-section { padding-block: clamp(2rem, 5vw, 3.5rem); border-top: 1px solid var(--border); }
     .section-intro { margin: .65rem 0 1.4rem; color: var(--muted); }
+    .practice-layout {
+      display: grid;
+      grid-template-columns: minmax(12rem, .65fr) minmax(0, 1.35fr);
+      gap: clamp(1.25rem, 4vw, 3rem);
+      align-items: start;
+    }
     .steps {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -196,28 +227,90 @@
       list-style: none;
     }
     .steps li { padding: 1.25rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); }
-    .step-number { display: block; margin-bottom: .55rem; color: var(--ink); font: 650 .85rem var(--mono); }
     .steps p { margin-top: .55rem; color: var(--muted); font-size: .91rem; }
-    .tools { margin: 0; border-top: 1px solid var(--border); }
-    .tool-row { display: grid; grid-template-columns: minmax(11rem, .38fr) 1fr; gap: .7rem 1.25rem; padding: .88rem 0; border-bottom: 1px solid var(--border); }
-    .tool-row dt { font-weight: 690; }
-    .tool-row dd { margin: 0; color: var(--muted); }
-    .options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 1.35rem; }
-    .options p { margin-top: .5rem; color: var(--muted); font-size: .93rem; }
+    .tour-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .3rem;
+      margin-bottom: 1.25rem;
+    }
+    .tour-tabs[hidden] { display: none; }
+    .tour-tabs button {
+      min-height: 2.65rem;
+      padding: .42rem .82rem;
+      border: 1px solid transparent;
+      border-radius: .55rem;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 660;
+      cursor: pointer;
+    }
+    .tour-tabs button:hover { background: var(--surface); }
+    .tour-tabs button[aria-selected="true"] { background: var(--surface-raised); border-color: #666b8d; color: var(--text); }
+    .tour-panel[hidden] { display: none; }
+    .tour-panel + .tour-panel { margin-top: 1.8rem; }
+    .tour-tabs:not([hidden]) ~ .tour-panel { margin-top: 0; }
+    .tour-panel:focus-visible { outline-offset: .45rem; }
+    .tour-visual {
+      border: 1px solid var(--border);
+      border-radius: .9rem;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .tour-visual img { width: 100%; }
+    .tour-visual figcaption {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: .3rem 1.2rem;
+      padding: .65rem .9rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .toolbar-scroll { overflow-x: auto; }
+    .toolbar-scroll:focus-visible { outline-offset: -4px; }
+    .toolbar-scroll img { min-width: 70rem; }
+    .tour-notes {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.1rem;
+      margin-top: 1.2rem;
+    }
+    .tour-notes p, .tour-copy p { margin-top: .5rem; color: var(--muted); font-size: .93rem; }
+    .tour-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: clamp(1rem, 4vw, 3rem);
+      align-items: center;
+    }
+    .tour-split.settings { grid-template-columns: minmax(0, 27rem) minmax(0, 25rem); }
+    .tour-copy h3 + p { margin-top: .65rem; }
+    .tour-copy p + h3 { margin-top: 1.3rem; }
+    .tool-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
     .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; padding-block: 1.25rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .88rem; }
 
     @media (max-width: 52rem) {
-      .hero { grid-template-columns: 1fr; align-items: start; }
+      .hero, .practice-layout, .tour-split, .tour-split.settings { grid-template-columns: 1fr; align-items: start; }
       .hero-copy h1 { max-width: 18ch; }
-      .steps, .options { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .tour-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .settings .tour-visual { max-width: 27rem; }
     }
     @media (max-width: 36rem) {
       .wrap { width: calc(100% - 2rem); }
       .header-inner { padding-block: .7rem; }
       .site-nav { gap: .5rem .9rem; }
-      .tool-row { grid-template-columns: 1fr; gap: .25rem; }
+      .tool-comparison { grid-template-columns: 1fr; }
       .editor { left: 7%; width: 86%; }
-      .actions { margin-left: 0; }
+      .practice-tools .actions { margin-left: 0; }
+      .tour-tabs button { padding-inline: .58rem; font-size: .86rem; }
+      .tour-notes { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -230,9 +323,9 @@
       <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>ScreenInklet Tutorial</a>
       <nav class="site-nav" aria-label="Tutorial">
         <a href="#quick-start">Quick start</a>
+        <a href="#tour">App tour</a>
+        <a href="#practice">Practice</a>
         <a href="#tools">Drawing tools</a>
-        <a href="#settings">Settings</a>
-        <a href="https://github.com/ggamit1/InkOver">GitHub</a>
       </nav>
     </div>
   </header>
@@ -243,15 +336,111 @@
         <h1>Draw on your Mac screen.</h1>
         <p>Use ScreenInklet to highlight code, point out details, or sketch while you present.</p>
         <div class="hero-actions">
-          <a class="primary-link" href="#quick-start">Start the walkthrough</a>
-          <a class="download" href="https://github.com/ggamit1/InkOver/blob/main/Distribution/InkOver-0.1.0.dmg">Download the earlier InkOver beta</a>
+          <a class="primary-link" href="Distribution/ScreenInklet-0.1.0.dmg" download>Download for macOS</a>
+          <a class="text-link" href="#practice">Try the practice canvas</a>
+        </div>
+      </div>
+      <figure class="hero-image">
+        <img src="tutorial-assets/screen-annotation.jpg" width="1924" height="1148" fetchpriority="high"
+             alt="ScreenInklet drawing an arrow over highlighted Swift code, with the floating toolbar on the right">
+      </figure>
+    </div>
+
+    <section class="content-section" id="quick-start">
+      <h2>Quick start</h2>
+      <ol class="steps" role="list">
+        <li>
+          <h3>Install and open</h3>
+          <p>Open the DMG, drag <strong>ScreenInklet</strong> to Applications, and launch it. Look for the pencil icon in the menu bar. Requires macOS 14 or later.</p>
+        </li>
+        <li>
+          <h3>Start annotating</h3>
+          <p>Move the pointer to the display you want to mark up. Choose <strong>Start Annotation</strong> or press <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>Command</kbd> + <kbd>I</kbd>. Select <strong>Pen</strong> and drag to draw.</p>
+        </li>
+        <li>
+          <h3>Switch back and finish</h3>
+          <p>Choose <strong>Pointer</strong> to use the app underneath while the ink stays visible. Click <strong>Done</strong> or press the global shortcut to end annotation.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="content-section" id="tour" aria-labelledby="tour-title">
+      <h2 id="tour-title">Explore ScreenInklet</h2>
+      <p class="section-intro">See where to find the drawing controls, board, and settings.</p>
+      <div class="tour-tabs" role="tablist" aria-label="App screenshots" hidden>
+        <button type="button" id="tab-toolbar" role="tab" aria-controls="toolbar" aria-selected="true">Floating toolbar</button>
+        <button type="button" id="tab-board" role="tab" aria-controls="board" aria-selected="false" tabindex="-1">Drawing board</button>
+        <button type="button" id="tab-settings" role="tab" aria-controls="settings" aria-selected="false" tabindex="-1">Settings</button>
+      </div>
+
+      <div class="tour-panel" id="toolbar">
+        <figure class="tour-visual">
+          <div class="toolbar-scroll" tabindex="0" role="region" aria-label="Horizontal toolbar screenshot">
+            <img src="tutorial-assets/toolbar.jpg" width="3644" height="252" loading="lazy"
+                 alt="Horizontal ScreenInklet toolbar with drawing tools, ink controls, Board, Ring, Auto-Clear, Screenshot, Hide, and Done">
+          </div>
+          <figcaption>
+            <span>The horizontal toolbar on macOS</span>
+            <a href="tutorial-assets/toolbar.jpg">View toolbar at full size</a>
+          </figcaption>
+        </figure>
+        <div class="tour-notes">
+          <div>
+            <h3>Move it</h3>
+            <p>Drag the handle anywhere across your displays. Choose <strong>Toolbar Position</strong> in the menu bar to snap it to an edge or reset it.</p>
+          </div>
+          <div>
+            <h3>Set your ink</h3>
+            <p>Pick a color and width. Select <strong>Text</strong> to switch the width controls to text sizes.</p>
+          </div>
+          <div>
+            <h3>Clear automatically</h3>
+            <p>Turn on <strong>Auto-Clear</strong> to remove ink after 10 seconds of inactivity by default. Use <strong>Undo</strong> to recover the marks.</p>
+          </div>
+          <div>
+            <h3>Capture the display</h3>
+            <p>Click <strong>Screenshot</strong> to copy the annotated display. Paste it with <kbd>⌘V</kbd>. macOS may ask for screen recording permission.</p>
+          </div>
         </div>
       </div>
 
-      <section class="practice" id="practice" aria-labelledby="practice-title">
+      <div class="tour-panel tour-split" id="board">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/drawing-board.jpg" width="1924" height="1148" loading="lazy"
+               alt="Dark ScreenInklet drawing board with colored boxes labeled Sketch, Record, and Share">
+        </figure>
+        <div class="tour-copy">
+          <h3>Sketch on a separate board</h3>
+          <p>Click <strong>Board</strong> to switch from your screen to a separate canvas. Open <strong>Options</strong> to choose a horizontal or vertical page and a dark or white background.</p>
+          <h3>Return to your screen</h3>
+          <p>Click <strong>Board</strong> again to return to your screen annotations. Your board keeps its marks for the current session. When Auto-Clear is on, the board has its own timer.</p>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split settings" id="settings">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/settings.png" width="870" height="1524" loading="lazy"
+               alt="ScreenInklet settings showing toolbar position, a 10-second Auto-Clear delay, board options, and cursor ring controls">
+        </figure>
+        <div class="tour-copy">
+          <h3>Change the Auto-Clear delay</h3>
+          <p>Open <strong>Settings</strong> from the menu bar to choose a delay of 5, 10, 30, or 60 seconds.</p>
+          <h3>Highlight the pointer</h3>
+          <p>Use <strong>Ring</strong> in the toolbar or <strong>Cursor Ring</strong> in the menu bar. Set the color and diameter in Settings. The ring can stay on between annotation sessions.</p>
+          <h3>Bring back the toolbar</h3>
+          <p>Use <strong>Hide</strong> for a clear view and <strong>Show Toolbar</strong> in the menu bar to restore it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section practice-layout" id="practice" aria-labelledby="practice-title">
+      <div>
+        <h2 id="practice-title">Practice in your browser</h2>
+        <p class="section-intro">Mark up the sample code, change ink colors, and try Auto-Clear before opening the app.</p>
+      </div>
+      <div class="practice">
         <div class="practice-header">
-          <h2 id="practice-title">Practice canvas</h2>
-          <p>Try drawing in your browser.</p>
+          <h3>Practice canvas</h3>
         </div>
         <div class="screen">
           <div class="editor">
@@ -261,89 +450,158 @@
 }</code></pre>
           </div>
           <canvas id="ink" width="640" height="290" aria-label="Draw over a sample Swift function" aria-describedby="practice-hint">
-            The quick-start walkthrough below describes the same drawing gestures.
+            The quick-start walkthrough describes the same drawing gestures.
           </canvas>
         </div>
         <div class="practice-tools" hidden>
-          <button type="button" data-tool="pen" aria-pressed="true">Pen</button>
-          <button type="button" data-tool="highlighter" aria-pressed="false">Highlighter</button>
-          <button type="button" data-tool="arrow" aria-pressed="false">Arrow</button>
-          <div class="actions">
-            <button id="example" type="button">Show example</button>
-            <button id="undo" type="button" disabled>Undo</button>
-            <button id="clear" type="button">Clear</button>
-          </div>
+          <fieldset aria-label="Practice tools">
+            <button type="button" data-tool="pointer" aria-pressed="false">Pointer</button>
+            <button type="button" data-tool="pen" aria-pressed="true">Pen</button>
+            <button type="button" data-tool="highlighter" aria-pressed="false">Highlighter</button>
+            <button type="button" data-tool="arrow" aria-pressed="false">Arrow</button>
+          </fieldset>
+          <fieldset aria-label="Ink color">
+            <button class="swatch" type="button" data-color="coral" aria-label="Coral" aria-pressed="true"></button>
+            <button class="swatch" type="button" data-color="amber" aria-label="Amber" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-color="sky" aria-label="Sky" aria-pressed="false"></button>
+          </fieldset>
+          <fieldset class="practice-options" aria-label="Canvas actions">
+            <button id="auto-clear" type="button" aria-pressed="false">Auto-Clear</button>
+            <div class="actions">
+              <button id="example" type="button">Show example</button>
+              <button id="undo" type="button" disabled>Undo</button>
+              <button id="clear" type="button" disabled>Clear</button>
+            </div>
+          </fieldset>
         </div>
         <p class="practice-hint" id="practice-hint" aria-live="polite" hidden>Drag across the code to draw a freehand mark.</p>
         <noscript><p class="practice-hint">Enable JavaScript to draw in this canvas.</p></noscript>
-      </section>
-    </div>
-
-    <section class="content-section" id="quick-start">
-      <h2>Quick start</h2>
-      <ol class="steps" role="list">
-        <li>
-          <span class="step-number" aria-hidden="true">01</span>
-          <h3>Install and open</h3>
-          <p>Build and open ScreenInklet using the steps in the <a href="https://github.com/ggamit1/InkOver/blob/main/README.md#build-and-run">build guide</a>. Look for the pencil icon in the menu bar.</p>
-          <p>ScreenInklet requires <strong>macOS 14 Sonoma or later</strong>.</p>
-        </li>
-        <li>
-          <span class="step-number" aria-hidden="true">02</span>
-          <h3>Start annotating</h3>
-          <p>Move your pointer to the display you want to mark up. Press <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>Command</kbd> + <kbd>I</kbd>, or choose <strong>Start Annotation</strong> from the ScreenInklet menu.</p>
-          <p>Choose <strong>Pen</strong> in the floating toolbar, pick a color and width, then drag on the screen.</p>
-        </li>
-        <li>
-          <span class="step-number" aria-hidden="true">03</span>
-          <h3>Switch back and finish</h3>
-          <p>Choose <strong>Pointer</strong> to click and scroll in the app underneath while your marks stay visible. Select a drawing tool to resume.</p>
-          <p>Click <strong>Done</strong> or press the same shortcut to end annotation. ScreenInklet restores any remaining marks when you start again in the current session.</p>
-        </li>
-      </ol>
+      </div>
     </section>
 
-    <section class="content-section" id="tools">
-      <h2>Drawing tools</h2>
-      <p class="section-intro">Choose a tool in the toolbar, then make a mark on your screen or board.</p>
-      <dl class="tools">
-        <div class="tool-row">
-          <dt>Pen and Highlighter</dt>
-          <dd>Drag to draw freehand. Use Highlighter when you want to keep the content beneath the ink visible.</dd>
-        </div>
-        <div class="tool-row">
-          <dt>Line and Arrow</dt>
-          <dd>Drag from the starting point to the end. For Arrow, release at the detail you want to point to.</dd>
-        </div>
-        <div class="tool-row">
-          <dt>Rectangle and Oval</dt>
-          <dd>Drag between opposite corners of the area you want to frame.</dd>
-        </div>
-        <div class="tool-row">
-          <dt>Text</dt>
-          <dd>Pick a size, click to place a label, and type. Press <kbd>Return</kbd> to save it or <kbd>Escape</kbd> to cancel.</dd>
-        </div>
-        <div class="tool-row">
-          <dt>Eraser and Clear</dt>
-          <dd>Drag Eraser over marks or choose Clear to remove them all from the current canvas. Use <kbd>⌘Z</kbd> to undo or <kbd>⇧⌘Z</kbd> to redo.</dd>
-        </div>
-      </dl>
-    </section>
+    <section class="content-section" id="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title">Drawing tools in action</h2>
+      <p class="section-intro">Choose a tool to see what it looks like on the screen and how to use it.</p>
+      <div class="tour-tabs" role="tablist" aria-label="Drawing tool examples" hidden>
+        <button type="button" id="tab-tool-pen" role="tab" aria-controls="tool-pen" aria-selected="true">Pen</button>
+        <button type="button" id="tab-tool-highlighter" role="tab" aria-controls="tool-highlighter" aria-selected="false" tabindex="-1">Highlighter</button>
+        <button type="button" id="tab-tool-line" role="tab" aria-controls="tool-line" aria-selected="false" tabindex="-1">Line</button>
+        <button type="button" id="tab-tool-arrow" role="tab" aria-controls="tool-arrow" aria-selected="false" tabindex="-1">Arrow</button>
+        <button type="button" id="tab-tool-rectangle" role="tab" aria-controls="tool-rectangle" aria-selected="false" tabindex="-1">Rectangle</button>
+        <button type="button" id="tab-tool-oval" role="tab" aria-controls="tool-oval" aria-selected="false" tabindex="-1">Oval</button>
+        <button type="button" id="tab-tool-text" role="tab" aria-controls="tool-text" aria-selected="false" tabindex="-1">Text</button>
+        <button type="button" id="tab-tool-eraser" role="tab" aria-controls="tool-eraser" aria-selected="false" tabindex="-1">Eraser</button>
+        <button type="button" id="tab-tool-pointer" role="tab" aria-controls="tool-pointer" aria-selected="false" tabindex="-1">Pointer</button>
+      </div>
 
-    <section class="content-section" id="settings">
-      <h2>Board, cursor ring, and toolbar</h2>
-      <div class="options">
-        <div>
-          <h3>Draw on a separate board</h3>
-          <p>Choose <strong>Board</strong> and open <strong>Options</strong> for a horizontal or vertical page with a dark or white background. Click <strong>Board</strong> again to return to the screen.</p>
+      <div class="tour-panel tour-split" id="tool-pen">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/pen.jpg" width="1520" height="820" loading="lazy"
+               alt="A wavy coral underline drawn beneath the return expression in Swift code">
+        </figure>
+        <div class="tour-copy">
+          <h3>Draw a freehand underline</h3>
+          <p>Select <strong>Pen</strong>, choose an ink color, and drag beneath the line you want to call out. The mark follows your pointer as you draw.</p>
+          <p><a href="#practice" data-practice-tool="pen">Try Pen on the practice canvas</a></p>
         </div>
-        <div>
-          <h3>Highlight the pointer</h3>
-          <p>Toggle <strong>Ring</strong> in the toolbar or <strong>Cursor Ring</strong> in the menu bar. Set its color and diameter in <strong>Settings</strong>. It can stay on between annotation sessions.</p>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-highlighter">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/highlighter.jpg" width="1520" height="820" loading="lazy"
+               alt="An amber highlight over the return expression with the code still readable through it">
+        </figure>
+        <div class="tour-copy">
+          <h3>Highlight readable text</h3>
+          <p>Select <strong>Highlighter</strong> and drag across a line of text. Use the <strong>Bold</strong> width to cover a taller line.</p>
+          <p><a href="#practice" data-practice-tool="highlighter">Try Highlighter on the practice canvas</a></p>
         </div>
-        <div>
-          <h3>Move or hide the toolbar</h3>
-          <p>Drag the toolbar handle or choose an edge from <strong>Toolbar Position</strong> in the menu bar. Choose <strong>Hide</strong> for a clear view and <strong>Show Toolbar</strong> to bring it back.</p>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-line">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/line.jpg" width="1520" height="820" loading="lazy"
+               alt="A straight mint line beneath the Swift function declaration">
+        </figure>
+        <div class="tour-copy">
+          <h3>Make a straight underline</h3>
+          <p>Select <strong>Line</strong>, click where the underline should start, and drag to its endpoint. ScreenInklet draws a straight line between those points.</p>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-arrow">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/arrow.jpg" width="1520" height="820" loading="lazy"
+               alt="A coral arrow from empty space pointing at the return expression">
+        </figure>
+        <div class="tour-copy">
+          <h3>Point to a detail</h3>
+          <p>Select <strong>Arrow</strong>. Start in nearby empty space and drag toward the detail. Release where you want the arrowhead to land.</p>
+          <p><a href="#practice" data-practice-tool="arrow">Try Arrow on the practice canvas</a></p>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-rectangle">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/rectangle.jpg" width="1520" height="820" loading="lazy"
+               alt="A blue rectangle framing the full return expression">
+        </figure>
+        <div class="tour-copy">
+          <h3>Frame a line or region</h3>
+          <p>Select <strong>Rectangle</strong> and drag from just outside one corner of the area to the opposite corner. Leave a little space around the content so the outline stays clear of the text.</p>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-oval">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/oval.jpg" width="1520" height="820" loading="lazy"
+               alt="A violet oval circling the multiplication symbol and number 2">
+        </figure>
+        <div class="tour-copy">
+          <h3>Circle a small detail</h3>
+          <p>Select <strong>Oval</strong> and drag diagonally between opposite corners of an imaginary box around the detail. The oval fits inside that box.</p>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-text">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/text.jpg" width="1520" height="820" loading="lazy"
+               alt="A mint text label reading Doubles the input to the right of the code">
+        </figure>
+        <div class="tour-copy">
+          <h3>Add a label</h3>
+          <p>Select <strong>Text</strong>, choose a size, and click where the note should appear. Type your label and press <kbd>Return</kbd> to place it or <kbd>Escape</kbd> to cancel.</p>
+        </div>
+      </div>
+
+      <div class="tour-panel" id="tool-eraser">
+        <div class="tour-copy">
+          <h3>Remove an individual mark</h3>
+          <p>Select <strong>Eraser</strong> and drag over the mark you want to remove. Here the underline disappears and the arrow stays. Use <strong>Clear</strong> to remove all marks on the current canvas, <kbd>⌘Z</kbd> to undo, or <kbd>⇧⌘Z</kbd> to redo.</p>
+        </div>
+        <div class="tool-comparison">
+          <figure class="tour-visual">
+            <img src="tutorial-assets/tools/eraser-before.jpg" width="1520" height="820" loading="lazy"
+                 alt="Swift code with a coral underline and a blue arrow">
+            <figcaption>Before erasing</figcaption>
+          </figure>
+          <figure class="tour-visual">
+            <img src="tutorial-assets/tools/eraser.jpg" width="1520" height="820" loading="lazy"
+                 alt="The eraser circle sits where the underline was, and the blue arrow remains">
+            <figcaption>While erasing the underline</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="tour-panel tour-split" id="tool-pointer">
+        <figure class="tour-visual">
+          <img src="tutorial-assets/tools/pointer.jpg" width="1520" height="820" loading="lazy"
+               alt="The standard arrow cursor is visible in the editor, with the amber highlight still over the return expression">
+        </figure>
+        <div class="tour-copy">
+          <h3>Use the app underneath</h3>
+          <p>Select <strong>Pointer</strong> to click, scroll, or select content in the app underneath. The ink stays visible. Choose a drawing tool when you want to add another mark.</p>
+          <p><a href="#practice" data-practice-tool="pointer">Try Pointer on the practice canvas</a></p>
         </div>
       </div>
     </section>
@@ -355,38 +613,87 @@
   </footer>
 
   <script>
+    function enableTabs(tabList) {
+      const tabs = [...tabList.querySelectorAll('[role="tab"]')];
+      const panels = tabs.map(tab => document.getElementById(tab.getAttribute("aria-controls")));
+
+      function showPanel(index) {
+        for (const [position, tab] of tabs.entries()) {
+          const selected = position === index;
+          tab.setAttribute("aria-selected", selected);
+          tab.tabIndex = selected ? 0 : -1;
+          panels[position].hidden = !selected;
+        }
+      }
+
+      function showLinkedPanel() {
+        const index = panels.findIndex(panel => "#" + panel.id === location.hash);
+        if (index >= 0) showPanel(index);
+      }
+
+      for (const [position, tab] of tabs.entries()) {
+        panels[position].setAttribute("role", "tabpanel");
+        panels[position].setAttribute("aria-labelledby", tab.id);
+        panels[position].tabIndex = 0;
+        tab.addEventListener("click", () => showPanel(position));
+        tab.addEventListener("keydown", event => {
+          let next;
+          switch (event.key) {
+            case "ArrowRight": next = (position + 1) % tabs.length; break;
+            case "ArrowLeft": next = (position + tabs.length - 1) % tabs.length; break;
+            case "Home": next = 0; break;
+            case "End": next = tabs.length - 1; break;
+            default: return;
+          }
+          event.preventDefault();
+          showPanel(next);
+          tabs[next].focus();
+        });
+      }
+      showPanel(0);
+      showLinkedPanel();
+      window.addEventListener("hashchange", showLinkedPanel);
+      tabList.hidden = false;
+    }
+    for (const tabList of document.querySelectorAll('[role="tablist"]')) enableTabs(tabList);
+
     const canvas = document.querySelector("#ink");
     const context = canvas.getContext("2d");
+    const drawingSize = { width: canvas.width, height: canvas.height };
     const hint = document.querySelector("#practice-hint");
     const toolButtons = document.querySelectorAll("[data-tool]");
+    const swatches = document.querySelectorAll("[data-color]");
+    const colors = Object.fromEntries([...swatches].map(button => [
+      button.dataset.color, getComputedStyle(button).getPropertyValue("--swatch-color").trim()
+    ]));
     const undoButton = document.querySelector("#undo");
     const clearButton = document.querySelector("#clear");
-    const styles = {
-      pen: { color: "#ff9e8e", width: 4 },
-      highlighter: { color: "#ffd16b72", width: 19 },
-      arrow: { color: "#ffad9d", width: 4 }
-    };
+    const autoClearButton = document.querySelector("#auto-clear");
     const instructions = {
+      pointer: "Existing marks stay visible. Choose a drawing tool to add ink.",
       pen: "Drag across the code to draw a freehand mark.",
       highlighter: "Drag across the return line to highlight it.",
       arrow: "Drag toward a detail to point to it with an arrow."
     };
-    const exampleHighlight = { tool: "highlighter", points: [] };
-    const exampleArrow = { tool: "arrow", points: [] };
+    const exampleHighlight = { tool: "highlighter", color: colors.amber, points: [] };
+    const exampleArrow = { tool: "arrow", color: colors.coral, points: [] };
     const example = [exampleHighlight, exampleArrow];
     const returnLine = document.querySelector("#return-line");
     let tool = "pen";
+    let ink = colors.coral;
     let marks = example;
     let activeStroke = null;
     let activePointer = null;
+    let autoClear = false;
+    let autoClearTimer;
     const undoHistory = [];
 
     function renderStroke(stroke) {
-      const { color, width } = styles[stroke.tool];
       const start = stroke.points[0];
       const end = stroke.points.at(-1);
-      context.strokeStyle = color;
-      context.lineWidth = width;
+      const highlight = stroke.tool === "highlighter";
+      context.strokeStyle = highlight ? stroke.color + "72" : stroke.color;
+      context.lineWidth = highlight ? 19 : 4;
       context.lineCap = "round";
       context.lineJoin = "round";
       context.beginPath();
@@ -408,7 +715,7 @@
     }
 
     function render() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, drawingSize.width, drawingSize.height);
       for (const mark of marks) renderStroke(mark);
       if (activeStroke) renderStroke(activeStroke);
       undoButton.disabled = undoHistory.length === 0;
@@ -418,18 +725,33 @@
     function setMarks(nextMarks) {
       undoHistory.push(marks);
       marks = nextMarks;
+      scheduleAutoClear();
       render();
+    }
+
+    function scheduleAutoClear() {
+      window.clearTimeout(autoClearTimer);
+      if (!autoClear || !marks.length || activeStroke) return;
+      autoClearTimer = window.setTimeout(() => {
+        setMarks([]);
+        hint.textContent = "Auto-Clear removed the ink. Choose Undo to restore it.";
+      }, 10000);
     }
 
     function pointFrom(event) {
       const bounds = canvas.getBoundingClientRect();
       return {
-        x: (event.clientX - bounds.left) * canvas.width / bounds.width,
-        y: (event.clientY - bounds.top) * canvas.height / bounds.height
+        x: (event.clientX - bounds.left) * drawingSize.width / bounds.width,
+        y: (event.clientY - bounds.top) * drawingSize.height / bounds.height
       };
     }
 
-    function positionExample() {
+    function resizeCanvas() {
+      const bounds = canvas.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.round(bounds.width * scale);
+      canvas.height = Math.round(bounds.height * scale);
+      context.setTransform(canvas.width / drawingSize.width, 0, 0, canvas.height / drawingSize.height, 0, 0);
       const line = returnLine.getBoundingClientRect();
       const center = line.top + line.height / 2;
       const start = pointFrom({ clientX: line.left, clientY: center });
@@ -446,15 +768,36 @@
         button.addEventListener("click", () => {
           tool = button.dataset.tool;
           for (const option of toolButtons) option.setAttribute("aria-pressed", option === button);
+          canvas.classList.toggle("pointer", tool === "pointer");
           hint.textContent = instructions[tool];
         });
       }
+      for (const link of document.querySelectorAll("[data-practice-tool]")) {
+        link.addEventListener("click", () => {
+          const button = document.querySelector(`[data-tool="${link.dataset.practiceTool}"]`);
+          button.click();
+        });
+      }
+      for (const button of swatches) {
+        button.addEventListener("click", () => {
+          ink = colors[button.dataset.color];
+          for (const option of swatches) option.setAttribute("aria-pressed", option === button);
+          hint.textContent = button.getAttribute("aria-label") + " ink selected.";
+        });
+      }
+      autoClearButton.addEventListener("click", () => {
+        autoClear = !autoClear;
+        autoClearButton.setAttribute("aria-pressed", autoClear);
+        scheduleAutoClear();
+        hint.textContent = autoClear ? "Ink clears after 10 seconds without drawing." : "Auto-Clear is off.";
+      });
       document.querySelector("#example").addEventListener("click", () => {
         if (marks !== example) setMarks(example);
         hint.textContent = "The example highlights the return line and points to it with an arrow.";
       });
       undoButton.addEventListener("click", () => {
         marks = undoHistory.pop();
+        scheduleAutoClear();
         hint.textContent = "Last change undone.";
         render();
       });
@@ -463,9 +806,10 @@
         hint.textContent = "Canvas cleared. Draw a new mark or choose Undo.";
       });
       canvas.addEventListener("pointerdown", event => {
-        if (activePointer !== null || event.button !== 0) return;
+        if (tool === "pointer" || activePointer !== null || event.button !== 0) return;
         activePointer = event.pointerId;
-        activeStroke = { tool, points: [pointFrom(event)] };
+        activeStroke = { tool, color: ink, points: [pointFrom(event)] };
+        scheduleAutoClear();
         canvas.setPointerCapture(activePointer);
         render();
       });
@@ -488,17 +832,21 @@
           setMarks([...marks, stroke]);
           hint.textContent = "Mark added. Choose Undo to remove it.";
         } else {
+          scheduleAutoClear();
           render();
         }
       });
-      canvas.addEventListener("pointercancel", event => {
+      function cancelStroke(event) {
         if (event.pointerId !== activePointer) return;
         activeStroke = null;
         activePointer = null;
+        scheduleAutoClear();
         render();
-      });
-      positionExample();
-      new ResizeObserver(positionExample).observe(canvas);
+      }
+      canvas.addEventListener("pointercancel", cancelStroke);
+      canvas.addEventListener("lostpointercapture", cancelStroke);
+      resizeCanvas();
+      new ResizeObserver(resizeCanvas).observe(canvas);
     }
   </script>
 </body>
